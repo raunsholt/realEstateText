@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        .autocomplete-container {
+            /* relative position for at de absolut positionerede forslag får korrekt placering.*/
+            position: relative;
+            width: 100%;
+            max-width: 30em;
+        }
+
+        .autocomplete-container input {
+            /* Både input og forslag får samme bredde som omkringliggende DIV */
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .dawa-autocomplete-suggestions {
+            margin: 0.3em 0 0 0;
+            padding: 0;
+            text-align: left;
+            border-radius: 0.3125em;
+            background: #fcfcfc;
+            box-shadow: 0 0.0625em 0.15625em rgba(0, 0, 0, .15);
+            position: absolute;
+            left: 0;
+            right: 0;
+            z-index: 9999;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        .dawa-autocomplete-suggestions .dawa-autocomplete-suggestion {
+            margin: 0;
+            list-style: none;
+            cursor: pointer;
+            padding: 0.4em 0.6em;
+            color: #333;
+            border: 0.0625em solid #ddd;
+            border-bottom-width: 0;
+        }
+
+        .dawa-autocomplete-suggestions .dawa-autocomplete-suggestion:first-child {
+            border-top-left-radius: inherit;
+            border-top-right-radius: inherit;
+        }
+
+        .dawa-autocomplete-suggestions .dawa-autocomplete-suggestion:last-child {
+            border-bottom-left-radius: inherit;
+            border-bottom-right-radius: inherit;
+            border-bottom-width: 0.0625em;
+        }
+
+        .dawa-autocomplete-suggestions .dawa-autocomplete-suggestion.dawa-selected,
+        .dawa-autocomplete-suggestions .dawa-autocomplete-suggestion:hover {
+            background: #f0f0f0;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Generér din boligtekst</h2>
+
+    <div class="autocomplete-container">
+        <input type="search" id="dawa-autocomplete-input" name="address">
+
+    </div>
+
+    <input type="button" value="Generér" onclick="fetchBuildingData()">
+    <p id="result"></p>
+
+    <script src="https://cdn.jsdelivr.net/npm/dawa-autocomplete2"></script>
+    <script>
+        const autocompleteInput = document.getElementById('dawa-autocomplete-input');
+        const options = {
+            select: function (selected) {
+                autocompleteInput.value = selected.tekst;
+            }
+        };
+        const autocomplete = dawaAutocomplete.dawaAutocomplete(autocompleteInput, options);
+
+        function fetchBuildingData() {
+            const address = encodeURIComponent(autocompleteInput.value);
+            const rawAddress = autocompleteInput.value;
+
+            fetch(`https://api.dataforsyningen.dk/adresser?q=${address}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.length > 0) {
+                        const adresseid = data[0].id; // Get the id from the first returned address
+
+                        fetch(`https://api.dataforsyningen.dk/bbrlight/enheder?adresseid=${adresseid}`)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(buildingData => {
+                                if (buildingData.length > 0) {
+                                    // Generate real estate description using ChatGPT API
+                                    generateDescription(buildingData, rawAddress);
+                                } else {
+                                    document.getElementById('result').innerHTML = 'No building information found for this address.';
+                                }
+                            })
+                            .catch(error => {
+                                console.error('There has been a problem with your fetch operation:', error);
+                            });
+
+                    } else {
+                        document.getElementById('result').innerHTML = 'No address found';
+                    }
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                });
+        }
+
+        async function generateDescription(buildingData, rawAddress) {
+            try {
+                const response = await axios.post('https://api.openai.com/v1/engines/text-davinci-003/completions', {
+                    prompt: `Skriv en kort boligbeskrivelse af ${rawAddress} baseret på information fra json-filen ${buildingData}. Nævn antallet af kvadratmeter.`,
+                    max_tokens: 100,
+                    temperature: 0.6
+                }, {
+                    headers: {
+                        'Authorization': 'Bearer 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',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                // Extract the generated description from the response
+                const description = response.data.choices[0].text.trim();
+
+                // Update the result element with the generated description
+                document.getElementById('result').innerHTML = description;
+            } catch (error) {
+                console.error('There has been a problem with the API request:', error);
+            }
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</body>
+
+</html>
