@@ -104,6 +104,16 @@
                             })
                             .then(buildingData => {
                                 if (buildingData.length > 0) {
+                                    const insideArea = buildingData[0].bygning.OMBYG_AAR;
+                                  /*  const livingRooms = 
+                                    const rooms = 
+                                    const basement = 
+                                    const planes = 
+                                    const build = 
+                                    const reBuild = 
+                                    const energyRating = 
+                                    const totalArea = */
+                                    console.log(buildingData); 
                                     // Generate real estate description using ChatGPT API
                                     generateDescription(buildingData, rawAddress);
                                 } else {
