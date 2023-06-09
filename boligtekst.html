@@ -3,11 +3,25 @@
 
 <head>
     <style>
-        .autocomplete-container {
+        .autocomplete-container,
+        .reasons-container {
             /* relative position for at de absolut positionerede forslag får korrekt placering.*/
             position: relative;
             width: 100%;
             max-width: 30em;
+        }
+
+        .autocomplete-container input,
+        .reasons-container input {
+            /* Både input og forslag får samme bredde som omkringliggende DIV */
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* New class for the reasons input to make it larger */
+        .reasons-container input {
+            height: 100px;
+            /* adjust this value as needed */
         }
 
         .autocomplete-container input {
@@ -60,11 +74,16 @@
 </head>
 
 <body>
-    <h2>Generér din boligtekst</h2>
+    <h2>boligtekst.ai</h2>
 
     <div class="autocomplete-container">
+        <label for="reasons-input">Adresse</label><br>
         <input type="search" id="dawa-autocomplete-input" name="address">
+    </div>
 
+    <div class="reasons-container">
+        <label for="reasons-input">Gode grunde til at købe boligen:</label><br>
+        <textarea id="reasons-input" name="reasons" placeholder="Fx: imponerende have, familievenlig beliggenhed, havudsigt, livligt bymiljø"></textarea>
     </div>
 
     <input type="button" value="Generér" onclick="fetchBuildingData()">
@@ -83,6 +102,7 @@
         function fetchBuildingData() {
             const address = encodeURIComponent(autocompleteInput.value);
             const rawAddress = autocompleteInput.value;
+            //  console.log(rawAddress);
 
             fetch(`https://api.dataforsyningen.dk/adresser?q=${address}`)
                 .then(response => {
@@ -104,18 +124,27 @@
                             })
                             .then(buildingData => {
                                 if (buildingData.length > 0) {
-                                    const insideArea = buildingData[0].bygning.OMBYG_AAR;
-                                  /*  const livingRooms = 
-                                    const rooms = 
-                                    const basement = 
-                                    const planes = 
-                                    const build = 
-                                    const reBuild = 
-                                    const energyRating = 
-                                    const totalArea = */
-                                    console.log(buildingData); 
+                                    const insideArea = buildingData[0].bygning.BYG_BOLIG_ARL_SAML;
+                                    const rooms = buildingData[0].VAERELSE_ANT;
+                                    const toilets = buildingData[0].AntVandskylToilleter;
+                                    const bathrooms = buildingData[0].AntBadevaerelser;
+                                    const build = buildingData[0].bygning.OPFOERELSE_AAR;
+                                    let reBuild = buildingData[0].bygning.OMBYG_AAR;
+                                    const planes = buildingData[0].bygning.ETAGER_ANT;
+                                    /*  To find
+                                      const basement = 
+                                      const energyRating = 
+                                      const totalArea = 
+                                      */
+                                    let buildingInfo = insideArea + " kvadratmeter bolig, " + rooms + " værelser, " + toilets + " toiletter, " + bathrooms + " badeværelser, opført i " + build + ", " + planes + " etager";
+                                    if (reBuild != 0) {
+                                        buildingInfo = buildingInfo.concat(", ombygget i " + reBuild);
+                                    }
+                                    const reasons = document.getElementById('reasons-input').value;
+                                    const promptText = "Du er en talentfuld ejendomsmægler, der skal skrive en inspirerende og fængende boligbeksrivelse på ca. 1000 tegn for en bolig beliggende på " + rawAddress + ". Læg vægt på følgende: " + reasons + ". Data om boligen er: " + buildingInfo + ". Fremhæv boligens styrker og appeller til køberens drømme og ønsker.";
+                                    console.log(promptText);
                                     // Generate real estate description using ChatGPT API
-                                    generateDescription(buildingData, rawAddress);
+                                    generateDescription(promptText);
                                 } else {
                                     document.getElementById('result').innerHTML = 'No building information found for this address.';
                                 }
@@ -133,10 +162,10 @@
                 });
         }
 
-        async function generateDescription(buildingData, rawAddress) {
+        async function generateDescription(promptText) {
             try {
                 const response = await axios.post('https://api.openai.com/v1/engines/text-davinci-003/completions', {
-                    prompt: `Skriv en kort boligbeskrivelse af ${rawAddress} baseret på information fra json-filen ${buildingData}. Nævn antallet af kvadratmeter.`,
+                    prompt: `${promptText}`,
                     max_tokens: 100,
                     temperature: 0.6
                 }, {
