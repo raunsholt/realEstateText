@@ -188,7 +188,7 @@
             <div class="reasons-container">
                 <label for="reasons-input">Gode grunde til at købe boligen:</label><br>
                 <textarea id="reasons-input" name="reasons"
-                    placeholder="Fx: imponerende have, familievenlig beliggenhed, havudsigt, livligt bymiljø"></textarea>
+                    placeholder="Fx 'imponerende have', 'familievenlig beliggenhed', 'havudsigt', 'livligt bymiljø'"></textarea>
             </div>
 
             <input type="button" value="Generér" onclick="fetchBuildingData()">
@@ -205,7 +205,7 @@
 
             <!-- Text input for 'changes' and the associated button -->
             <label for="changes">Ændringer</label><br>
-            <input type="text" id="changes" placeholder="Enter changes">
+            <textarea id="changes" placeholder="Fx 'fremhæv ovenlysvinduerne', '5 min. til nærmeste togstation', 'fjern omtale af kælderen'"></textarea>
             <input type="button" value="Add Changes" onclick="applyChanges()">
         </div>
     </div>
@@ -298,9 +298,10 @@
 
                 // Extract the generated description from the response
                 const description = response.data.choices[0].text.trim();
+                console.log(description);
 
                 // Update the result element with the generated description
-                document.getElementById('result').innerHTML = description;
+                document.getElementById('result').value = description;
             } catch (error) {
                 console.error('There has been a problem with the API request:', error);
             }
@@ -319,6 +320,24 @@
             textarea.select();
             document.execCommand('copy');
         }
+
+        function autoAdjustHeight(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
+        // Call this function whenever the text content changes
+        // For instance, on page load and whenever the user inputs text
+        window.onload = function () {
+            var textareas = document.getElementsByTagName('textarea');
+            for (let i = 0; i < textareas.length; i++) {
+                autoAdjustHeight(textareas[i]);
+                textareas[i].addEventListener('input', function () {
+                    autoAdjustHeight(this);
+                }, false);
+            }
+        };
+
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
