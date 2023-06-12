@@ -3,17 +3,31 @@
 
 <head>
     <style>
+        textarea {
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 100%;
+            min-width: 100%;
+            margin-top: 5px;
+        }
+
+
         .autocomplete-container {
             /* relative position for at de absolut positionerede forslag får korrekt placering.*/
             position: relative;
             width: 100%;
             max-width: 30em;
+            margin-bottom: 1em;
         }
 
         .reasons-container {
             /* relative position for at de absolut positionerede forslag får korrekt placering.*/
             position: relative;
             width: 100%;
+            margin-bottom: 1em;
         }
 
         .autocomplete-container input,
@@ -21,6 +35,7 @@
             /* Både input og forslag får samme bredde som omkringliggende DIV */
             width: 100%;
             box-sizing: border-box;
+            margin-bottom: 1em;
         }
 
         /* New class for the reasons input to make it larger */
@@ -80,40 +95,120 @@
             width: 100%;
             resize: both;
             overflow: auto;
+            margin-bottom: 1em;
         }
 
+        .container {
+            width: 80%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .card {
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+            border-radius: 5px;
+            background: #fff;
+        }
+
+        input[type="button"] {
+            padding: 10px 20px;
+            margin-top: 10px;
+            color: #fff;
+            background: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="button"]:hover {
+            background: #0056b3;
+        }
+
+        #result {
+            width: 100%;
+            resize: both;
+            overflow: auto;
+            height: 200px;
+            /* You might want to adjust this */
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        input,
+        textarea {
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        .space-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        #copyButton {
+            padding: 0.5em;
+            width: auto;
+            color: black;
+            background: white;
+            border: 1px solid black;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
 <body>
-    <h2>boligtekst.ai</h2>
+    <h1>boligtekst.ai</h1>
 
     <div class="container">
-        <div class="card">
-        <div class="autocomplete-container">
-            <label for="reasons-input">Adresse</label><br>
-            <input type="search" id="dawa-autocomplete-input" name="address">
+        <div class="card" id="dataCard">
+            <h2>Data</h2>
+            <div class="autocomplete-container">
+                <label for="dawa-autocomplete-input">Adresse</label><br>
+                <input type="search" id="dawa-autocomplete-input" name="address">
+            </div>
+
+            <div class="reasons-container">
+                <label for="reasons-input">Gode grunde til at købe boligen:</label><br>
+                <textarea id="reasons-input" name="reasons"
+                    placeholder="Fx: imponerende have, familievenlig beliggenhed, havudsigt, livligt bymiljø"></textarea>
+            </div>
+
+            <input type="button" value="Generér" onclick="fetchBuildingData()">
         </div>
+        <div class="card" id="resultCard">
+            <h2>Resultat</h2>
+            <!-- Button to copy result to clipboard -->
+            <div class="space-between">
+                <label for="result">Tekst</label>
+                <input type="button" id="copyButton" value="Kopiér tekst" onclick="copyToClipboard()">
+            </div>
 
-        <div class="reasons-container">
-            <label for="reasons-input">Gode grunde til at købe boligen:</label><br>
-            <textarea id="reasons-input" name="reasons"
-                placeholder="Fx: imponerende have, familievenlig beliggenhed, havudsigt, livligt bymiljø"></textarea>
+            <textarea id="result"></textarea>
+
+            <!-- Text input for 'changes' and the associated button -->
+            <label for="changes">Ændringer</label><br>
+            <input type="text" id="changes" placeholder="Enter changes">
+            <input type="button" value="Add Changes" onclick="applyChanges()">
         </div>
-
-        <input type="button" value="Generér" onclick="fetchBuildingData()">
     </div>
-    <div class="card">
-        <textarea id="result"></textarea>
-
-        <!-- Text input for 'changes' and the associated button -->
-        <input type="text" id="changes" placeholder="Enter changes">
-        <input type="button" value="Add Changes" onclick="applyChanges()">
-
-        <!-- Button to copy result to clipboard -->
-        <input type="button" value="Copy to Clipboard" onclick="copyToClipboard()">
-    </div>
-</div>
 
     <script src="https://cdn.jsdelivr.net/npm/dawa-autocomplete2"></script>
     <script>
