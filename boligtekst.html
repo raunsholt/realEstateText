@@ -3,12 +3,17 @@
 
 <head>
     <style>
-        .autocomplete-container,
-        .reasons-container {
+        .autocomplete-container {
             /* relative position for at de absolut positionerede forslag får korrekt placering.*/
             position: relative;
             width: 100%;
             max-width: 30em;
+        }
+
+        .reasons-container {
+            /* relative position for at de absolut positionerede forslag får korrekt placering.*/
+            position: relative;
+            width: 100%;
         }
 
         .autocomplete-container input,
@@ -70,24 +75,45 @@
         .dawa-autocomplete-suggestions .dawa-autocomplete-suggestion:hover {
             background: #f0f0f0;
         }
+
+        #result {
+            width: 100%;
+            resize: both;
+            overflow: auto;
+        }
+
     </style>
 </head>
 
 <body>
     <h2>boligtekst.ai</h2>
 
-    <div class="autocomplete-container">
-        <label for="reasons-input">Adresse</label><br>
-        <input type="search" id="dawa-autocomplete-input" name="address">
-    </div>
+    <div class="container">
+        <div class="card">
+        <div class="autocomplete-container">
+            <label for="reasons-input">Adresse</label><br>
+            <input type="search" id="dawa-autocomplete-input" name="address">
+        </div>
 
-    <div class="reasons-container">
-        <label for="reasons-input">Gode grunde til at købe boligen:</label><br>
-        <textarea id="reasons-input" name="reasons" placeholder="Fx: imponerende have, familievenlig beliggenhed, havudsigt, livligt bymiljø"></textarea>
-    </div>
+        <div class="reasons-container">
+            <label for="reasons-input">Gode grunde til at købe boligen:</label><br>
+            <textarea id="reasons-input" name="reasons"
+                placeholder="Fx: imponerende have, familievenlig beliggenhed, havudsigt, livligt bymiljø"></textarea>
+        </div>
 
-    <input type="button" value="Generér" onclick="fetchBuildingData()">
-    <p id="result"></p>
+        <input type="button" value="Generér" onclick="fetchBuildingData()">
+    </div>
+    <div class="card">
+        <textarea id="result"></textarea>
+
+        <!-- Text input for 'changes' and the associated button -->
+        <input type="text" id="changes" placeholder="Enter changes">
+        <input type="button" value="Add Changes" onclick="applyChanges()">
+
+        <!-- Button to copy result to clipboard -->
+        <input type="button" value="Copy to Clipboard" onclick="copyToClipboard()">
+    </div>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/dawa-autocomplete2"></script>
     <script>
@@ -142,7 +168,7 @@
                                     }
                                     const reasons = document.getElementById('reasons-input').value;
                                     const promptText = "Du er en talentfuld ejendomsmægler, der skal skrive en inspirerende og fængende boligbeksrivelse på ca. 1000 tegn for en bolig beliggende på " + rawAddress + ". Læg vægt på følgende: " + reasons + ". Data om boligen er: " + buildingInfo + ". Fremhæv boligens styrker og appeller til køberens drømme og ønsker.";
-                                    console.log(promptText);
+                                    console.log("promptText: " + promptText);
                                     // Generate real estate description using ChatGPT API
                                     generateDescription(promptText);
                                 } else {
@@ -166,7 +192,7 @@
             try {
                 const response = await axios.post('https://api.openai.com/v1/engines/text-davinci-003/completions', {
                     prompt: `${promptText}`,
-                    max_tokens: 100,
+                    max_tokens: 400,
                     temperature: 0.6
                 }, {
                     headers: {
@@ -183,6 +209,20 @@
             } catch (error) {
                 console.error('There has been a problem with the API request:', error);
             }
+        }
+
+        function applyChanges() {
+            const changes = document.getElementById('changes').value;
+            const result = document.getElementById('result').value;
+            const newPrompt = "Du er en ejendomsmægler, der skal optimere en salgstekst for en bolig. I den nye version skal du: " + changes + ". Den oprindelige tekst er: " + result;
+            console.log("newPrompt: " + newPrompt);
+            generateDescription(newPrompt);  // Pass the new prompt to your function
+        }
+
+        function copyToClipboard() {
+            const textarea = document.getElementById('result');
+            textarea.select();
+            document.execCommand('copy');
         }
     </script>
 
