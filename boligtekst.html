@@ -224,9 +224,9 @@
             </div>
 
             <div class="reasons-container">
-                <label for="reasons-input">Gode grunde til at købe boligen:</label><br>
+                <label for="reasons-input">Skriv 3 gode grunde til at købe boligen:</label><br>
                 <textarea id="reasons-input" name="reasons"
-                    placeholder="Fx 'lille nem have', 'familievenlig beliggenhed', 'imponerende havudsigt', 'livligt bymiljø'"></textarea>
+                    placeholder="Fx 'Lille nem have, familievenlig beliggenhed, tæt på offentlig transport'"></textarea>
             </div>
 
             <input type="button" value="Generér salgstekst" onclick="fetchBuildingData()">
@@ -304,7 +304,7 @@
                                         buildingInfo = buildingInfo.concat(", ombygget i " + reBuild);
                                     }
                                     const reasons = document.getElementById('reasons-input').value;
-                                    const promptText = "Du er en talentfuld ejendomsmægler, der skal skrive en inspirerende og fængende boligbeksrivelse på ca. 1000 tegn for en bolig beliggende på " + rawAddress + ". Læg vægt på følgende: " + reasons + ". Data om boligen er: " + buildingInfo + ".";
+                                    const promptText = "Du skal skrive en inspirerende boligbeskrivelse på ca. 1000 tegn for boligen " + rawAddress + ". Læg vægt på følgende: " + reasons + ". Data om boligen er: " + buildingInfo + ".";
                                     console.log("promptText: " + promptText);
                                     // Generate real estate description using ChatGPT API
                                     generateDescription(promptText);
@@ -330,30 +330,32 @@
             document.getElementById('dataLoadingStatus').classList.add('active');
             document.getElementById('resultLoadingStatus').classList.add('active');
 
-            // Default options for the request
-            const defaultOptions = {
-                max_tokens: 400,
-                temperature: 0.6,
-                model: "text-davinci-003",
-                // add other default parameters here...
-            };
-
-            // Override default options with provided options
-            const requestOptions = { ...defaultOptions, ...options };
-
             try {
-                const response = await axios.post('https://api.openai.com/v1/completions', {
-                    prompt: `${promptText}`,
-                    ...requestOptions
-                }, {
+                var url = 'https://api.openai.com/v1/chat/completions';
+
+                var data = {
+                    model: 'gpt-3.5-turbo',
+                    messages: [
+                        { role: 'system', content: 'Du er en hjælpsom ejendomsmægler og tekstforfatter' },
+                        { role: 'user', content: `${promptText}` }
+                    ],
+                    temperature: 0.7,
+                    max_tokens: 400
+                };
+
+                var response = await fetch(url, {
+                    method: 'POST',
                     headers: {
-                        'Authorization': 'Bearer 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',
-                        'Content-Type': 'application/json'
-                    }
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer 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'
+                    },
+                    body: JSON.stringify(data)
                 });
 
                 // Extract the generated description from the response
-                const description = response.data.choices[0].text.trim();
+                const responseData = await response.json();
+
+                let description = responseData.choices[0].message.content;
                 console.log(description);
 
                 // Update the result element with the generated description
@@ -385,7 +387,7 @@
         function applyChanges() {
             const changes = document.getElementById('changes').value;
             const result = document.getElementById('result').value;
-            const newPrompt = "Du er ejendomsmægler og skal optimere salgsteksten for en bolig. I den nye version skal du: " + changes + ". Den oprindelige tekst er: " + result;
+            const newPrompt = "Du skal optimere salgsteksten for en bolig. I den nye version skal du sikre dig at: " + changes + ". Den oprindelige tekst er: " + result;
             console.log("newPrompt: " + newPrompt);
             generateDescription(newPrompt);  // Pass the new prompt to your function
         }
