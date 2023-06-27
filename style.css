@@ -3,6 +3,7 @@ body {
 }
 
 textarea {
+    font-family: 'Inter', sans-serif;
     padding: 10px;
     box-sizing: border-box;
     border: 1px solid #ddd;
@@ -39,7 +40,7 @@ textarea {
 
 /* New class for the reasons input to make it larger */
 .reasons-container input {
-    height: 100px;
+    /* height: 100px; */
     /* adjust this value as needed */
 }
 
@@ -130,7 +131,9 @@ textarea {
 .card {
     position: relative;
     /* Needed to position overlay correctly */
-    padding: 20px;
+    padding: 24px;
+    padding-top: 8px;
+    padding-bottom: 8px;
     margin-bottom: 20px;
     border: 1px solid #ddd;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
@@ -139,8 +142,9 @@ textarea {
 }
 
 input[type="button"] {
-    padding: 10px 20px;
-    margin-top: 10px;
+    padding: 8px 16px;
+    margin-top: 8px;
+    margin-bottom: 16px;
     color: #fff;
     background: #007BFF;
     border: none;
@@ -150,6 +154,11 @@ input[type="button"] {
 
 input[type="button"]:hover {
     background: #0056b3;
+}
+
+.buttonText {
+    font-size: 16px;
+    font-weight:500;
 }
 
 #result {
@@ -176,7 +185,7 @@ textarea {
 }
 
 label {
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .space-between {
@@ -203,3 +212,11 @@ label {
 #resultCard {
     display: none;
 } */
+
+.hidden {
+    display: none;
+}
+
+h2 {
+    cursor: pointer;
+}

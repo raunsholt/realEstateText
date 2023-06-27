@@ -9,14 +9,14 @@
 
 <body>
     <div class="container">
-        <h1 style="margin-bottom: 0px;">boligtekst.ai</h1>
+        <h1 style="margin-bottom: 0px;">Boligtekst AI</h1>
     </div>
 
     <div class="container">
         <div class="card" id="dataCard">
-            <h2>1. Udfyld informationer</h2>
+            <h2>1. Indtast informationer</h2>
             <div class="loading-overlay" id="dataLoadingStatus">
-                <span>Loading...</span>
+                <span>Henter informationer...</span>
             </div>
             <div class="autocomplete-container">
                 <label for="dawa-autocomplete-input">Adresse</label><br>
@@ -24,36 +24,43 @@
             </div>
 
             <div class="reasons-container">
-                <label for="reasons-input">Skriv 3 gode grunde til at købe boligen:</label><br>
-                <textarea id="reasons-input" name="reasons"
-                    placeholder="Fx 'Lille nem have, familievenlig beliggenhed, tæt på offentlig transport'"></textarea>
+                <h3>Tre grunde til at købe boligen</h3>
+                <label for="reason1">Grund #1</label><br>
+                <input type="text" id="reason1" name="reason1"
+                    placeholder=""></input>
+                    <label for="reason2">Grund #2</label><br>
+                <input type="text" id="reason2" name="reason2"
+                    placeholder=""></input>
+                    <label for="reason3">Grund #3</label><br>
+                <input type="text" id="reason3" name="reason3"
+                    placeholder=""></input>
             </div>
 
-            <input type="button" value="Generér salgstekst" onclick="fetchBuildingData()">
+            <input type="button" class="buttonText" value="Generér boligtekst" onclick="fetchBuildingData()">
         </div>
         <div class="card" id="resultCard">
-            <h2>2. Kopiér din salgstekst</h2>
+            <h2>2. Kopiér din boligtekst</h2>
             <div class="loading-overlay" id="resultLoadingStatus">
-                <span>Loading...</span>
+                <span>Genererer din boligtekst...</span>
             </div>
             <!-- Button to copy result to clipboard -->
             <div class="space-between">
-                <label for="result">Salgstekst</label>
-                <input type="button" id="copyButton" value="Kopiér tekst" onclick="copyToClipboard()">
+                <label for="result">Boligtekst</label>
+                <input type="button" class="buttonText" id="copyButton" value="Kopiér tekst" onclick="copyToClipboard()">
             </div>
 
             <textarea id="result"></textarea>
         </div>
-        <div class="card" id="resultCard">
-            <h2>3. Evt. tilret tekst</h2>
-            <div class="loading-overlay" id="resultLoadingStatus">
-                <span>Loading...</span>
+        <div class="card" id="changeCard">
+            <h2>3. Tilret</h2>
+            <div class="loading-overlay" id="changeLoadingStatus">
+                <span></span>
             </div>
             <!-- Text input for 'changes' and the associated button -->
-            <label for="changes">Ikke helt tilfreds? Skriv dine ændringer:</label><br>
+            <label for="changes">Skriv hvad der skal rettes</label><br>
             <textarea id="changes"
-                placeholder="Fx 'fremhæv ovenlysvinduerne', '5 min. til nærmeste togstation', 'fjern omtale af kælderen'"></textarea>
-            <input type="button" value="Opdatér salgstekst" onclick="applyChanges()">
+                placeholder=""></textarea>
+            <input type="button" class="buttonText" value="Generér tilrettet boligtekst" onclick="applyChanges()">
         </div>
     </div>
 
