@@ -106,6 +106,12 @@ textarea {
     box-sizing: border-box;
 }
 
+@media (max-width: 600px) {
+    .container {
+        width: 95%;
+    }
+}
+
 .loading-overlay {
     position: absolute;
     top: 0;
@@ -158,8 +164,15 @@ input[type="button"]:hover {
 
 .buttonText {
     font-size: 16px;
-    font-weight:500;
+    font-weight: 500;
 }
+
+@media (max-width: 600px) {
+    .buttonText {
+        font-size: 14px;
+    }
+}
+
 
 #result {
     width: 100%;
