@@ -2,190 +2,77 @@
 <html>
 
 <head>
-    <style>
-        .autocomplete-container,
-        .reasons-container {
-            /* relative position for at de absolut positionerede forslag får korrekt placering.*/
-            position: relative;
-            width: 100%;
-            max-width: 30em;
-        }
-
-        .autocomplete-container input,
-        .reasons-container input {
-            /* Både input og forslag får samme bredde som omkringliggende DIV */
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        /* New class for the reasons input to make it larger */
-        .reasons-container input {
-            height: 100px;
-            /* adjust this value as needed */
-        }
-
-        .autocomplete-container input {
-            /* Både input og forslag får samme bredde som omkringliggende DIV */
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .dawa-autocomplete-suggestions {
-            margin: 0.3em 0 0 0;
-            padding: 0;
-            text-align: left;
-            border-radius: 0.3125em;
-            background: #fcfcfc;
-            box-shadow: 0 0.0625em 0.15625em rgba(0, 0, 0, .15);
-            position: absolute;
-            left: 0;
-            right: 0;
-            z-index: 9999;
-            overflow-y: auto;
-            box-sizing: border-box;
-        }
-
-        .dawa-autocomplete-suggestions .dawa-autocomplete-suggestion {
-            margin: 0;
-            list-style: none;
-            cursor: pointer;
-            padding: 0.4em 0.6em;
-            color: #333;
-            border: 0.0625em solid #ddd;
-            border-bottom-width: 0;
-        }
-
-        .dawa-autocomplete-suggestions .dawa-autocomplete-suggestion:first-child {
-            border-top-left-radius: inherit;
-            border-top-right-radius: inherit;
-        }
-
-        .dawa-autocomplete-suggestions .dawa-autocomplete-suggestion:last-child {
-            border-bottom-left-radius: inherit;
-            border-bottom-right-radius: inherit;
-            border-bottom-width: 0.0625em;
-        }
-
-        .dawa-autocomplete-suggestions .dawa-autocomplete-suggestion.dawa-selected,
-        .dawa-autocomplete-suggestions .dawa-autocomplete-suggestion:hover {
-            background: #f0f0f0;
-        }
-    </style>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <h2>boligtekst.ai</h2>
-
-    <div class="autocomplete-container">
-        <label for="reasons-input">Adresse</label><br>
-        <input type="search" id="dawa-autocomplete-input" name="address">
+    <div class="container">
+        <h1 style="margin-bottom: 0px;">Boligtekst AI</h1>
     </div>
 
-    <div class="reasons-container">
-        <label for="reasons-input">Gode grunde til at købe boligen:</label><br>
-        <textarea id="reasons-input" name="reasons" placeholder="Fx: imponerende have, familievenlig beliggenhed, havudsigt, livligt bymiljø"></textarea>
-    </div>
+    <div class="container">
+        <div class="card" id="dataCard">
+            <h2>1. Indtast informationer</h2>
+            <div class="loading-overlay" id="dataLoadingStatus">
+                <span>Henter informationer...</span>
+            </div>
+            <div class="autocomplete-container">
+                <label for="dawa-autocomplete-input">Adresse</label><br>
+                <input type="search" id="dawa-autocomplete-input" name="address">
+            </div>
 
-    <input type="button" value="Generér" onclick="fetchBuildingData()">
-    <p id="result"></p>
+            <div class="reasons-container">
+                <h3>Tre grunde til at købe boligen</h3>
+                <label for="reason1">Grund #1</label><br>
+                <input type="text" id="reason1" name="reason1" placeholder=""></input>
+                <label for="reason2">Grund #2</label><br>
+                <input type="text" id="reason2" name="reason2" placeholder=""></input>
+                <label for="reason3">Grund #3</label><br>
+                <input type="text" id="reason3" name="reason3" placeholder=""></input>
+            </div>
+
+            <h3>Skrivestil</h3>
+            <div class="reasons-container">
+                <input type="radio" id="style1" name="writingStyle" value="style1" class="radio-input">
+                <label for="style1">Saglig</label><br>
+                <input type="radio" id="style2" name="writingStyle" value="style2" class="radio-input">
+                <label for="style2">Beskrivende</label><br>
+                <input type="radio" id="style3" name="writingStyle" value="style3" class="radio-input">
+                <label for="style3">Fortællende</label>
+            </div>
+
+            <input type="button" class="buttonText" value="Generér boligtekst" onclick="fetchBuildingData()">
+        </div>
+        <div class="card" id="resultCard">
+            <h2>2. Kopiér din boligtekst</h2>
+            <div class="loading-overlay" id="resultLoadingStatus">
+                <span>Genererer din boligtekst...</span>
+            </div>
+            <!-- Button to copy result to clipboard -->
+            <div class="space-between">
+                <label for="result">Boligtekst</label>
+                <input type="button" class="buttonText" id="copyButton" value="Kopiér tekst"
+                    onclick="copyToClipboard()">
+            </div>
+
+            <textarea id="result"></textarea>
+        </div>
+        <!-- <div class="card" id="changeCard">
+            <h2>3. Tilret</h2>
+            <div class="loading-overlay" id="changeLoadingStatus">
+                <span></span>
+            </div>
+            // Text input for 'changes' and the associated button 
+            <label for="changes">Skriv hvad der skal rettes</label><br>
+            <textarea id="changes" placeholder=""></textarea>
+            <input type="button" class="buttonText" value="Generér tilrettet boligtekst" onclick="applyChanges()">
+        </div> -->
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/dawa-autocomplete2"></script>
-    <script>
-        const autocompleteInput = document.getElementById('dawa-autocomplete-input');
-        const options = {
-            select: function (selected) {
-                autocompleteInput.value = selected.tekst;
-            }
-        };
-        const autocomplete = dawaAutocomplete.dawaAutocomplete(autocompleteInput, options);
-
-        function fetchBuildingData() {
-            const address = encodeURIComponent(autocompleteInput.value);
-            const rawAddress = autocompleteInput.value;
-            //  console.log(rawAddress);
-
-            fetch(`https://api.dataforsyningen.dk/adresser?q=${address}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.length > 0) {
-                        const adresseid = data[0].id; // Get the id from the first returned address
-
-                        fetch(`https://api.dataforsyningen.dk/bbrlight/enheder?adresseid=${adresseid}`)
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Network response was not ok');
-                                }
-                                return response.json();
-                            })
-                            .then(buildingData => {
-                                if (buildingData.length > 0) {
-                                    const insideArea = buildingData[0].bygning.BYG_BOLIG_ARL_SAML;
-                                    const rooms = buildingData[0].VAERELSE_ANT;
-                                    const toilets = buildingData[0].AntVandskylToilleter;
-                                    const bathrooms = buildingData[0].AntBadevaerelser;
-                                    const build = buildingData[0].bygning.OPFOERELSE_AAR;
-                                    let reBuild = buildingData[0].bygning.OMBYG_AAR;
-                                    const planes = buildingData[0].bygning.ETAGER_ANT;
-                                    /*  To find
-                                      const basement = 
-                                      const energyRating = 
-                                      const totalArea = 
-                                      */
-                                    let buildingInfo = insideArea + " kvadratmeter bolig, " + rooms + " værelser, " + toilets + " toiletter, " + bathrooms + " badeværelser, opført i " + build + ", " + planes + " etager";
-                                    if (reBuild != 0) {
-                                        buildingInfo = buildingInfo.concat(", ombygget i " + reBuild);
-                                    }
-                                    const reasons = document.getElementById('reasons-input').value;
-                                    const promptText = "Du er en talentfuld ejendomsmægler, der skal skrive en inspirerende og fængende boligbeksrivelse på ca. 1000 tegn for en bolig beliggende på " + rawAddress + ". Læg vægt på følgende: " + reasons + ". Data om boligen er: " + buildingInfo + ". Fremhæv boligens styrker og appeller til køberens drømme og ønsker.";
-                                    console.log(promptText);
-                                    // Generate real estate description using ChatGPT API
-                                    generateDescription(promptText);
-                                } else {
-                                    document.getElementById('result').innerHTML = 'No building information found for this address.';
-                                }
-                            })
-                            .catch(error => {
-                                console.error('There has been a problem with your fetch operation:', error);
-                            });
-
-                    } else {
-                        document.getElementById('result').innerHTML = 'No address found';
-                    }
-                })
-                .catch(error => {
-                    console.error('There has been a problem with your fetch operation:', error);
-                });
-        }
-
-        async function generateDescription(promptText) {
-            try {
-                const response = await axios.post('https://api.openai.com/v1/engines/text-davinci-003/completions', {
-                    prompt: `${promptText}`,
-                    max_tokens: 100,
-                    temperature: 0.6
-                }, {
-                    headers: {
-                        'Authorization': 'Bearer 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',
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                // Extract the generated description from the response
-                const description = response.data.choices[0].text.trim();
-
-                // Update the result element with the generated description
-                document.getElementById('result').innerHTML = description;
-            } catch (error) {
-                console.error('There has been a problem with the API request:', error);
-            }
-        }
-    </script>
-
+    <script src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </body>
 
