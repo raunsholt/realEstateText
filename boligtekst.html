@@ -4,7 +4,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -26,14 +26,21 @@
             <div class="reasons-container">
                 <h3>Tre grunde til at købe boligen</h3>
                 <label for="reason1">Grund #1</label><br>
-                <input type="text" id="reason1" name="reason1"
-                    placeholder=""></input>
-                    <label for="reason2">Grund #2</label><br>
-                <input type="text" id="reason2" name="reason2"
-                    placeholder=""></input>
-                    <label for="reason3">Grund #3</label><br>
-                <input type="text" id="reason3" name="reason3"
-                    placeholder=""></input>
+                <input type="text" id="reason1" name="reason1" placeholder=""></input>
+                <label for="reason2">Grund #2</label><br>
+                <input type="text" id="reason2" name="reason2" placeholder=""></input>
+                <label for="reason3">Grund #3</label><br>
+                <input type="text" id="reason3" name="reason3" placeholder=""></input>
+            </div>
+
+            <h3>Skrivestil</h3>
+            <div class="reasons-container">
+                <input type="radio" id="style1" name="writingStyle" value="style1" class="radio-input">
+                <label for="style1">Saglig</label><br>
+                <input type="radio" id="style2" name="writingStyle" value="style2" class="radio-input">
+                <label for="style2">Beskrivende</label><br>
+                <input type="radio" id="style3" name="writingStyle" value="style3" class="radio-input">
+                <label for="style3">Fortællende</label>
             </div>
 
             <input type="button" class="buttonText" value="Generér boligtekst" onclick="fetchBuildingData()">
@@ -46,22 +53,22 @@
             <!-- Button to copy result to clipboard -->
             <div class="space-between">
                 <label for="result">Boligtekst</label>
-                <input type="button" class="buttonText" id="copyButton" value="Kopiér tekst" onclick="copyToClipboard()">
+                <input type="button" class="buttonText" id="copyButton" value="Kopiér tekst"
+                    onclick="copyToClipboard()">
             </div>
 
             <textarea id="result"></textarea>
         </div>
-        <div class="card" id="changeCard">
+        <!-- <div class="card" id="changeCard">
             <h2>3. Tilret</h2>
             <div class="loading-overlay" id="changeLoadingStatus">
                 <span></span>
             </div>
-            <!-- Text input for 'changes' and the associated button -->
+            // Text input for 'changes' and the associated button 
             <label for="changes">Skriv hvad der skal rettes</label><br>
-            <textarea id="changes"
-                placeholder=""></textarea>
+            <textarea id="changes" placeholder=""></textarea>
             <input type="button" class="buttonText" value="Generér tilrettet boligtekst" onclick="applyChanges()">
-        </div>
+        </div> -->
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/dawa-autocomplete2"></script>

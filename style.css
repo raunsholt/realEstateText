@@ -16,7 +16,7 @@ textarea {
 
 
 .autocomplete-container {
-    /* relative position for at de absolut positionerede forslag får korrekt placering.*/
+    /* relative position for at de absolut positionerede forslag får korrekt placering. */
     position: relative;
     width: 100%;
     max-width: 30em;
@@ -24,25 +24,23 @@ textarea {
 }
 
 .reasons-container {
-    /* relative position for at de absolut positionerede forslag får korrekt placering.*/
+    /* relative position for at de absolut positionerede forslag får korrekt placering. */
     position: relative;
-    width: 100%;
     margin-bottom: 1em;
 }
 
 .autocomplete-container input,
 .reasons-container input {
     /* Både input og forslag får samme bredde som omkringliggende DIV */
-    width: 100%;
     box-sizing: border-box;
     margin-bottom: 1em;
 }
 
-/* New class for the reasons input to make it larger */
+/*  New class for the reasons input to make it larger 
 .reasons-container input {
-    /* height: 100px; */
-    /* adjust this value as needed */
-}
+     height: 100px; 
+     adjust this value as needed 
+} */
 
 .autocomplete-container input {
     /* Både input og forslag får samme bredde som omkringliggende DIV */
@@ -221,10 +219,6 @@ label {
     display: none;
     /* Add additional styles to make the loading status look good */
 }
-/* 
-#resultCard {
-    display: none;
-} */
 
 .hidden {
     display: none;
@@ -232,4 +226,8 @@ label {
 
 h2 {
     cursor: pointer;
+}
+
+.radio-input {
+    width: auto;
 }
