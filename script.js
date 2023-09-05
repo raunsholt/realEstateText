@@ -1,3 +1,4 @@
+require('dotenv').config();
 
 let headings = document.querySelectorAll(".card > h2");
 const autocompleteInput = document.getElementById('dawa-autocomplete-input');
@@ -228,7 +229,7 @@ async function generateDescription(buildingText, rawAddress, reason1, reason2, r
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer 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'
+                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
             },
             body: JSON.stringify(data)
         });
